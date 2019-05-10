@@ -17,7 +17,7 @@ app = Flask(__name__)
 #################################################
 # Database Setup
 #################################################
-
+# this is where we designate the database we want to connect to
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/bellybutton.sqlite"
 db = SQLAlchemy(app)
 
@@ -88,10 +88,14 @@ def samples(sample):
     # Filter the data based on the sample number and
     # only keep rows with values above 1
     sample_data = df.loc[df[sample] > 1, ["otu_id", "otu_label", sample]]
+    sample_data = sample_data.sort_values(by=[sample],ascending=False)
     # Format the data to send as json
     data = {
+        # values for the pie chart
         "otu_ids": sample_data.otu_id.values.tolist(),
+        # labels for the pie chart
         "sample_values": sample_data[sample].values.tolist(),
+        # hovertext for the chart
         "otu_labels": sample_data.otu_label.tolist(),
     }
     return jsonify(data)
